@@ -1,0 +1,10 @@
+{
+    "python.linting.enabled": true,
+    "python.linting.pylintPath": "pylint",
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "yapf",
+    "python.linting.pylintEttnabled": true,
+    "python.analysis.extraPaths": [
+        "./Lab8"
+    ]
+}
