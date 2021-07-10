@@ -5,6 +5,97 @@ from Resources import comsig
 from ModuleLab6 import pam12, pamrcvr10
 
 
+def fskrcvr(M,sig_rt,rtype,fcparms,FBparms,ptype,pparms):
+    """ M-ary Frequency Shift Keying (FSK) Receiver for Coherent (’coh’) and Non-coherent (’noncoh’) FSK Reception
+    >>>>> sig_bn,sig_wt,ixn = fskrcvr(M,sig_rt,rtype,fcparms,FBparms,ptype,pparms) <<<<<
+    where
+    sig_bn: sequence from class sigSequ
+    sig_bn.signal(): received DT sequence b[n]
+    sig_wt: waveform from class sigWave
+    sig_wt.signal(): wt = [[w0it+1j*w0qt],[w1it+1j*w1qt],..., [wM-1it+1j*wM-1qt]]
+    wmit: m-th in-phase matched filter output
+    wmqt: m-th quadrature matched filter output
+    ixn: sampling time indexes for b(t)->b[n], w(t)->w[n]
+    M: number of distinct FSK frequencies
+    sig_rt: waveform from class sigwave
+    sig_rt.signal(): received (noisy) FSK signal r(t)
+    sig_rt.timeAxis(): time axis for r(t)
+    rtype: receiver type from list {’coh’,’noncoh’}
+    fcparms = [[fc0,fc1,...,fcM-1], [thetac0,thetac1,...,thetacM-1]] for {'coh'}
+    fcparms = [fc0,fc1,...,fcM-1] for {’noncoh’}
+    fc0,fc1,...,fcM-1: FSK (carrier) frequencies for {’coh’,’noncoh’}
+    thetac0,thetac1,...,thetacM-1: FSK (carrier) phases in deg (0: cos, -90: sin) for {’coh’}
+    FBparms = [FB, dly]
+    FB: baud rate of PAM signal, TB=1/FB
+    dly: sampling delay for wm(t)->wm[n], fraction of TB sampling times are t=n*TB+t0 where t0=dly*TB
+    ptype: pulse type from list {’man’,’rcf’,’rect’,’rrcf’,’sinc’,’tri’}
+    pparms = [] for {’man’,’rect’,’tri’}
+    pparms = [k, alpha] for {’rcf’,’rrcf’}
+    pparms = [k, beta] for {’sinc’}
+    k: "tail" truncation parameter for {’rcf’,’rrcf’,’sinc’} (truncates at -k*TB and k*TB)
+    alpha: Rolloff parameter for {’rcf’,’rrcf’}, 0<=alpha<=1
+    beta: Kaiser window parameter for {’sinc’}
+    """
+    Fs = sig_rt.get_Fs()
+    t0 = sig_rt.get_t0()
+    FB, dly = FBparms
+    t_dly = dly / FB
+    tdiff = sig_rt.timeAxis()[-1] - sig_rt.timeAxis()[0]
+    tt = sig_rt.timeAxis() # Time axis for r(t)
+    nn0 = int(np.ceil((tt[0]-t_dly)*FB)) # First data index
+                                        # Integer multiple of 1/FB
+    ixnn0 = np.argmin(abs(tt-(nn0/float(FB)+t_dly)))
+    N = int(np.floor((tt[-1]-tt[ixnn0])*FB)) + 1 # Number of data symbols
+    ixn = ixnn0 + np.array(np.around(Fs*(np.arange(N))/float(FB)), np.int64) # Sampling indexes
+    if rtype == "coh":
+        vmi = sig_rt.signal() * 2 * np.cos(2 * np.pi * fcparms[0][0] * sig_rt.timeAxis() + fcparms[1][0] * np.pi / 180)
+        sig_vt = comsig.sigWave(vmi, Fs, t0)
+        sig_bn, sig_bt, ixn = pamrcvr10(sig_vt, FBparms=FBparms, ptype=ptype, pparms=pparms)
+        L = len(sig_bn.signal())
+        wvn = np.zeros(shape = (M, L))
+        wv = []
+        for i in range(M):
+            vmi = sig_rt.signal() * 2 * np.cos(2 * np.pi * fcparms[0][i] * sig_rt.timeAxis() + fcparms[1][i] * np.pi / 180)
+            sig_vt = comsig.sigWave(vmi, Fs, t0)
+            sig_bn, sig_bt, ixn = pamrcvr10(sig_vt, FBparms=FBparms, ptype=ptype, pparms=pparms)
+            wvn[i] = sig_bn.signal()
+            wit = sig_bt.signal().real
+            wqt = sig_bt.signal().imag
+            wv.append(wit + 1j * wqt)
+        sig_bnd = np.argmax(wvn, axis = 0)
+        sig_bn = comsig.sigSequ(sig_bnd, FB)
+        sig_wt = comsig.sigWave(wv, Fs, t0)
+    elif rtype == "noncoh":
+        vmi = sig_rt.signal() * 2 * np.cos(2 * np.pi * fcparms[0] * sig_rt.timeAxis())
+        sig_vt = comsig.sigWave(vmi, Fs, t0)
+        sig_bn, sig_bt, ixn = pamrcvr10(sig_vt, FBparms=FBparms, ptype=ptype, pparms=pparms)
+        L = len(sig_bn.signal())
+        wvn = np.zeros(shape = (M, L))
+        wv = []
+        for i in range(M):
+            vmi =   sig_rt.signal() * 2 * np.cos(2 * np.pi * fcparms[i] * sig_rt.timeAxis())
+            vmq = - sig_rt.signal() * 2 * np.sin(2 * np.pi * fcparms[i] * sig_rt.timeAxis())
+
+            sig_vti = comsig.sigWave(vmi, Fs, t0)
+            sig_vtq = comsig.sigWave(vmq, Fs, t0)
+            _, sig_bti, _ = pamrcvr10(sig_vti, FBparms=FBparms, ptype=ptype, pparms=pparms)
+            _, sig_btq, _ = pamrcvr10(sig_vtq, FBparms=FBparms, ptype=ptype, pparms=pparms)
+
+            wi = sig_bti.signal().real
+            wq = sig_btq.signal().real
+            bt = (wi ** 2 + wq ** 2) ** 0.5
+            wvn[i] = bt[ixn]
+
+            wv.append(wi + 1j * wq)
+        sig_bnd = np.argmax(wvn, axis = 0)
+        sig_bn = comsig.sigSequ(sig_bnd, FB)
+        sig_wt = comsig.sigWave(wv, Fs, t0)
+    else:
+        raise NotImplementedError("rtype deve ser 'coh' ou 'noncoh'")
+    return sig_bn, sig_wt, ixn
+
+
+
 def fskxmtr(M,sig_dn,Fs,ptype,pparms,xtype,fcparms):
     """ M-ary Frequency Shift Keying (FSK) Transmitter for Choherent (’coh’) and Non-coherent (’noncoh’) FSK Signals
     >>>>> sig_xt = fskxmtr(M,sig_dn,Fs,ptype,pparms,xtype,fcparms) <<<<<
@@ -78,9 +169,6 @@ def fskxmtr(M,sig_dn,Fs,ptype,pparms,xtype,fcparms):
         raise NotImplementedError("xtype deve ser 'coh' ou 'noncoh'")
 
     return comsig.sigWave(xf, Fs, t0 = - 1 / (2 * FB))
-
-
-
 
 
 def askrcvr(sig_rt, rtype, fcparms, FBparms, ptype, pparms):
