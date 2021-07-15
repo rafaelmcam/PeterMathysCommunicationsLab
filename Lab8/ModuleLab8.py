@@ -5,6 +5,37 @@ from Resources import comsig
 from ModuleLab6 import pam12, pamrcvr10
 
 
+def cpfskxmtr(M,sig_dn,Fs,ptype,pparms,fcparms):
+    """ M-ary Frequency Shift Keying (FSK) Transmitter for Continuous Phase FSK Signals
+    >>>>> sig_xt = cpfskxmtr(M,sig_dn,Fs,ptype,pparms,fcparms) <<<<<
+    where
+    sig_xt: waveform from class sigWave
+    sig_xt.signal(): transmitted FSK signal, sampling rate Fs
+    sig_xt.timeAxis(): time axis for x(t), starts at t=-TB/2 M: number of distinct symbol values in d[n]
+    sig_dn: sequence from class sigSequ
+    sig_dn.signal() = dn
+    dn: M-ary (0,1,..,M-1) N-symbol DT input sequence d_n
+    sig_dn.get_FB(): baud rate of d_n, TB=1/FB
+    Fs: sampling rate of x(t)
+    ptype: pulse type from set {’man’,’rcf’,’rect’,’rrcf’,’sinc’,’tri’}
+    pparms = [] for {’man’,’rect’,’tri’}
+    pparms = [k alpha] for {’rcf’,’rrcf’}
+    pparms = [k beta] for {’sinc’}
+    k: "tail" truncation parameter for {’rcf’,’rrcf’,’sinc’} (truncates p(t) to -k*TB <= t < k*TB)
+    alpha: Rolloff parameter for {’rcf’,’rrcf’}, 0<=alpha<=1
+    beta: Kaiser window parameter for {’sinc’}
+    fcparms = [fc, deltaf]
+    fc: carrier frequency for {’cpfsk’}
+    deltaf: frequency spacing for {’cpfsk’} for dn=0 -> fc, dn=1 -> fc+deltaf, dn=2 -> fc+2*deltaf, etc
+    """
+    fc, deltaf = fcparms
+
+    L = len(sig_dn.signal())
+    sig_xt = fskxmtr(M, comsig.sigSequ(sig_dn.signal(), sig_dn.get_FB()), Fs, ptype, pparms, 'coh', [[fc + i * deltaf for i in range(M)], [0 for i in range(M)]])
+
+    return sig_xt
+
+
 def fskrcvr(M,sig_rt,rtype,fcparms,FBparms,ptype,pparms):
     """ M-ary Frequency Shift Keying (FSK) Receiver for Coherent (’coh’) and Non-coherent (’noncoh’) FSK Reception
     >>>>> sig_bn,sig_wt,ixn = fskrcvr(M,sig_rt,rtype,fcparms,FBparms,ptype,pparms) <<<<<
