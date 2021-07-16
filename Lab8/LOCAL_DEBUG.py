@@ -13,14 +13,13 @@ import ModuleLab8
 
 
 Fs = 44100
-FB = 100
-fc = 300
+data = np.array([0, 1, 1, 1, 0, 0, 1, 0])
+dn = comsig.sigSequ(data, FB = 100)
 
-sig_an = comsig.sigSequ([np.random.randint(0, 2, 10), 2 * np.pi * np.random.rand(10) ], FB)
+f1, f2 = 332, 723
+sig_xt = ModuleLab8.cpfskxmtr(2, dn, 44100, 'rect', [], [332, 723 - 332])
 
-sig_xt, sig_st = ModuleLab8.askxmtr(sig_an, Fs, 'rect', [], 'noncoh', [fc])
-plt.ylim([-2, 2])
+
+plt.ylim([-1.5, 1.5])
 plt.grid()
-plt.plot(sig_xt.timeAxis(), sig_xt.signal())
-plt.plot(sig_st.timeAxis(), sig_st.signal().real)
-plt.plot(sig_st.timeAxis(), sig_st.signal().imag)
+plt.plot(sig_xt.timeAxis(), sig_xt.signal(), color = "red")

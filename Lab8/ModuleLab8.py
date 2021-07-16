@@ -28,12 +28,46 @@ def cpfskxmtr(M,sig_dn,Fs,ptype,pparms,fcparms):
     fc: carrier frequency for {’cpfsk’}
     deltaf: frequency spacing for {’cpfsk’} for dn=0 -> fc, dn=1 -> fc+deltaf, dn=2 -> fc+2*deltaf, etc
     """
+    if ptype != "rect":
+        raise NotImplementedError("Lógica feita para pulso retangular (fase variando linearmente dentro do intervalo do símbolo)")
+
+    sig_dn = comsig.sigSequ(np.concatenate((np.array([0, 0, 0, 0]), sig_dn.signal())), FB = sig_dn.get_FB())
+
     fc, deltaf = fcparms
+    fcv = [fc + i * deltaf for i in range(M)]
+    data = sig_dn.signal()
+    L = len(data)
+    FB = sig_dn.get_FB()
+    cs = np.zeros(shape = (M, L))
+    for i, symbol in enumerate(data):
+        if i == 0:
+            cs[symbol][i] += 0.5
+            continue
+        for j in range(M):
+            cs[j][i] += cs[j][i - 1]
+        cs[symbol][i] += 1
 
-    L = len(sig_dn.signal())
-    sig_xt = fskxmtr(M, comsig.sigSequ(sig_dn.signal(), sig_dn.get_FB()), Fs, ptype, pparms, 'coh', [[fc + i * deltaf for i in range(M)], [0 for i in range(M)]])
+    sig_xt_compare = fskxmtr(M = M, sig_dn = sig_dn, Fs = Fs, ptype = ptype, pparms = pparms, xtype = 'coh', fcparms = [fcv, [0 for _ in range(M)]])
 
-    return sig_xt
+    xf = np.zeros(shape = (len(sig_xt_compare.signal()),))
+    assert(np.isclose(sum(cs[:, L - 1]), L - 0.5))
+    theta_vec = np.zeros(shape=(L,))
+    theta_vec[0] = np.arccos(sig_xt_compare.signal()[0])
+    for i in range(1, L):
+        acc = 0
+        for j in range(M):
+            acc += (fcv[j] * cs[j][i - 1] / FB)
+        theta_vec[i] = 2 * np.pi * acc
+        theta_vec[i] %= (2 * np.pi)
+
+    ts = int(Fs / FB)
+    mt = np.arange(ts) / Fs
+    for i, d in enumerate(data):
+        f, t = i * ts, (i + 1) * ts
+        xf[f:t] = np.cos(2 * np.pi * fcv[d] * mt + theta_vec[i])
+
+    # return comsig.sigWave(xf, Fs, t0 = - 1 / (2 * FB))
+    return comsig.sigWave(xf[4 * ts:], Fs, t0 = - 1 / (2 * FB))
 
 
 def fskrcvr(M,sig_rt,rtype,fcparms,FBparms,ptype,pparms):
