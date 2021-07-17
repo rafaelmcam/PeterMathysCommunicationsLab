@@ -364,7 +364,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.ASKrcvr_cb_0 = ASKrcvr_cb(
             a_gain=1,
             b_FB=FB,
-            c_bpsym=bpsym,
+            c_bpsym=bpsym * (1 + 1j),
             d_pol=pol,
             e_sps=sps,
             f_ptype=ptype,
@@ -386,9 +386,9 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.connect((self.ASKrcvr_cb_0, 3), (self.blocks_null_sink_0, 0))
         self.connect((self.ASKrcvr_cb_0, 4), (self.blocks_null_sink_0_0, 0))
         self.connect((self.ASKrcvr_cb_0, 5), (self.blocks_null_sink_0_0_0, 0))
-        self.connect((self.ASKrcvr_cb_0, 1), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.ASKrcvr_cb_0, 2), (self.qtgui_const_sink_x_0, 0))
         self.connect((self.ASKrcvr_cb_0, 0), (self.qtgui_time_sink_x_1, 0))
-        self.connect((self.ASKrcvr_cb_0, 2), (self.qtgui_time_sink_x_1, 1))
+        self.connect((self.ASKrcvr_cb_0, 1), (self.qtgui_time_sink_x_1, 1))
         self.connect((self.ASKxmtr_bc_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.ASKrcvr_cb_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.qtgui_freq_sink_x_0, 0))
@@ -489,7 +489,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
 
     def set_bpsym(self, bpsym):
         self.bpsym = bpsym
-        self.ASKrcvr_cb_0.set_c_bpsym(self.bpsym)
+        self.ASKrcvr_cb_0.set_c_bpsym(self.bpsym * (1 + 1j))
         self.ASKxmtr_bc_0.set_b_bpsym(self.bpsym)
 
     def get_Q_gain(self):

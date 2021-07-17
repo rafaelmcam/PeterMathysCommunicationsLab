@@ -343,6 +343,28 @@ blocks:
     coordinate: [1393, 16]
     rotation: 0
     state: true
+- name: mfzerocc_0
+  id: mfzerocc
+  parameters:
+    a_gain: a_gain
+    affinity: ''
+    alias: ''
+    b_FB: b_FB
+    c_sps: e_sps
+    comment: ''
+    d_ptype: f_ptype
+    e_pparms: g_pparms
+    f_fcparms: h_fcparms
+    g_samp_dly: j_samp_dly
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [398, 295]
+    rotation: 0
+    state: true
 - name: pad_sink_0
   id: pad_sink
   parameters:
@@ -358,7 +380,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [661, 301]
+    coordinate: [700, 282]
     rotation: 0
     state: true
 - name: pad_sink_1
@@ -484,7 +506,13 @@ connections:
 - [blocks_complex_to_float_0, '0', Y2B_fb_0_0, '0']
 - [blocks_complex_to_float_0, '1', Y2B_fb_0_1, '0']
 - [blocks_complex_to_mag_0, '0', Y2B_fb_0, '0']
+- [mfzerocc_0, '0', pad_sink_0, '0']
+- [mfzerocc_0, '1', blocks_complex_to_float_0, '0']
+- [mfzerocc_0, '1', blocks_complex_to_mag_0, '0']
+- [mfzerocc_0, '1', pad_sink_1_0, '0']
+- [mfzerocc_0, '2', pad_sink_1, '0']
 - [pad_source_0, '0', MF0_cc_0, '0']
+- [pad_source_0, '0', mfzerocc_0, '0']
 
 metadata:
   file_format: 1
