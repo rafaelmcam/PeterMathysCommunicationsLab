@@ -10,7 +10,7 @@ options:
     gen_linking: dynamic
     generate_options: hb
     hier_block_src_path: '.:'
-    id: MF0_cc
+    id: ASK0_fc
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -21,7 +21,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: Basic Complex MF
+    title: Basic ASK Xmtr
     window_size: ''
   states:
     bus_sink: false
@@ -36,12 +36,12 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '256000'
+    value: a_FB * b_sps
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1118, 15]
+    coordinate: [822, 18]
     rotation: 0
     state: true
 - name: ModuleLab62
@@ -152,19 +152,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1048, 84]
+    coordinate: [298, 113]
     rotation: 0
     state: true
-- name: a_gain
+- name: a_FB
   id: parameter
   parameters:
     alias: ''
     comment: ''
     hide: none
-    label: Gain
+    label: Baud Rate
     short_id: ''
-    type: eng_float
-    value: '1'
+    type: intx
+    value: '32000'
   states:
     bus_sink: false
     bus_source: false
@@ -179,7 +179,7 @@ blocks:
     alias: ''
     amp: '1'
     comment: ''
-    freq: '- f_fcparms[0]'
+    freq: e_fcparms[0]
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
@@ -191,43 +191,40 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [57, 389]
+    coordinate: [224, 388]
     rotation: 0
     state: true
-- name: b_FB
+- name: b_sps
   id: parameter
   parameters:
     alias: ''
     comment: ''
     hide: none
-    label: Baud Rate
+    label: Samples per Symbol
     short_id: ''
     type: intx
-    value: '32000'
+    value: '8'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [280, 8]
+    coordinate: [311, 13]
     rotation: 0
     state: true
-- name: blocks_delay_0
-  id: blocks_delay
+- name: blocks_float_to_complex_0
+  id: blocks_float_to_complex
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    delay: g_samp_dly
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_ports: '1'
-    type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1005, 301]
+    coordinate: [572, 325]
     rotation: 0
     state: true
 - name: blocks_multiply_const_vxx_0
@@ -236,7 +233,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    const: a_gain
+    const: np.exp(1j * np.pi / 180 * e_fcparms[1])
     maxoutbuf: '0'
     minoutbuf: '0'
     type: complex
@@ -245,25 +242,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [279, 284]
-    rotation: 0
-    state: true
-- name: blocks_multiply_const_vxx_0_0
-  id: blocks_multiply_const_vxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    const: np.exp(-1j * np.pi / 180 * f_fcparms[1])
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [330, 428]
+    coordinate: [579, 427]
     rotation: 0
     state: true
 - name: blocks_multiply_xx_0
@@ -281,75 +260,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [588, 289]
+    coordinate: [829, 360]
     rotation: 0
     state: true
-- name: blocks_vector_sink_x_0
-  id: blocks_vector_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    reserve_items: '1024'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1196, 239]
-    rotation: 0
-    state: true
-- name: blocks_vector_sink_x_0_0
-  id: blocks_vector_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    reserve_items: '1024'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [668, 396]
-    rotation: 180
-    state: true
-- name: blocks_vector_sink_x_0_1
-  id: blocks_vector_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    reserve_items: '1024'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1201, 463]
-    rotation: 0
-    state: true
-- name: c_sps
-  id: parameter
-  parameters:
-    alias: ''
-    comment: ''
-    hide: none
-    label: Samples per Symbol
-    short_id: ''
-    type: intx
-    value: '8'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [402, 12]
-    rotation: 0
-    state: true
-- name: d_ptype
+- name: c_ptype
   id: parameter
   parameters:
     alias: ''
@@ -363,10 +277,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [561, 12]
+    coordinate: [476, 13]
     rotation: 0
     state: true
-- name: e_pparms
+- name: d_pparms
   id: parameter
   parameters:
     alias: ''
@@ -380,10 +294,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [670, 13]
+    coordinate: [588, 16]
     rotation: 0
     state: true
-- name: f_fcparms
+- name: e_fcparms
   id: parameter
   parameters:
     alias: ''
@@ -397,62 +311,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [800, 13]
-    rotation: 0
-    state: true
-- name: fir_filter_xxx_0
-  id: fir_filter_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    decim: '1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_delay: '0'
-    taps: ModuleLab62.pamhRt(c_sps, d_ptype, e_pparms)
-    type: ccc
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [746, 293]
-    rotation: 0
-    state: enabled
-- name: fir_filter_xxx_1
-  id: fir_filter_xxx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    decim: c_sps
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_delay: '0'
-    taps: '1'
-    type: ccc
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [948, 411]
-    rotation: 180
-    state: true
-- name: g_samp_dly
-  id: parameter
-  parameters:
-    alias: ''
-    comment: ''
-    hide: none
-    label: Sample Delay
-    short_id: ''
-    type: intx
-    value: '0'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [910, 14]
+    coordinate: [715, 15]
     rotation: 0
     state: true
 - name: import_0
@@ -465,39 +324,26 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1037, 15]
+    coordinate: [210, 109]
     rotation: 0
     state: enabled
-- name: import_0_0
-  id: import
-  parameters:
-    alias: ''
-    comment: ''
-    imports: import ModuleLab62
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1041, 66]
-    rotation: 0
-    state: disabled
 - name: interp_fir_filter_xxx_0
   id: interp_fir_filter_xxx
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    interp: c_sps
+    interp: b_sps
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_delay: '0'
-    taps: '1'
-    type: ccc
+    taps: ModuleLab62.pampt(b_sps, c_ptype, d_pparms)
+    type: fff
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [943, 483]
+    coordinate: [291, 313]
     rotation: 0
     state: true
 - name: pad_sink_0
@@ -506,52 +352,16 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    label: MF out
-    num_streams: '1'
-    optional: 'True'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1195, 342]
-    rotation: 0
-    state: true
-- name: pad_sink_0_0
-  id: pad_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
     label: out
     num_streams: '1'
-    optional: 'True'
+    optional: 'False'
     type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [668, 435]
-    rotation: 180
-    state: true
-- name: pad_sink_0_1
-  id: pad_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    label: Samples out
-    num_streams: '1'
-    optional: 'True'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1195, 540]
+    coordinate: [1001, 372]
     rotation: 0
     state: true
 - name: pad_source_0
@@ -565,31 +375,23 @@ blocks:
     minoutbuf: '0'
     num_streams: '1'
     optional: 'False'
-    type: complex
+    type: float
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [99, 275]
+    coordinate: [124, 321]
     rotation: 0
     state: true
 
 connections:
-- [analog_sig_source_x_0, '0', blocks_multiply_const_vxx_0_0, '0']
-- [blocks_delay_0, '0', blocks_vector_sink_x_0, '0']
-- [blocks_delay_0, '0', fir_filter_xxx_1, '0']
-- [blocks_delay_0, '0', pad_sink_0, '0']
-- [blocks_multiply_const_vxx_0, '0', blocks_multiply_xx_0, '0']
-- [blocks_multiply_const_vxx_0_0, '0', blocks_multiply_xx_0, '1']
-- [blocks_multiply_xx_0, '0', fir_filter_xxx_0, '0']
-- [fir_filter_xxx_0, '0', blocks_delay_0, '0']
-- [fir_filter_xxx_1, '0', blocks_vector_sink_x_0_0, '0']
-- [fir_filter_xxx_1, '0', interp_fir_filter_xxx_0, '0']
-- [fir_filter_xxx_1, '0', pad_sink_0_0, '0']
-- [interp_fir_filter_xxx_0, '0', blocks_vector_sink_x_0_1, '0']
-- [interp_fir_filter_xxx_0, '0', pad_sink_0_1, '0']
-- [pad_source_0, '0', blocks_multiply_const_vxx_0, '0']
+- [analog_sig_source_x_0, '0', blocks_multiply_const_vxx_0, '0']
+- [blocks_float_to_complex_0, '0', blocks_multiply_xx_0, '0']
+- [blocks_multiply_const_vxx_0, '0', blocks_multiply_xx_0, '1']
+- [blocks_multiply_xx_0, '0', pad_sink_0, '0']
+- [interp_fir_filter_xxx_0, '0', blocks_float_to_complex_0, '0']
+- [pad_source_0, '0', interp_fir_filter_xxx_0, '0']
 
 metadata:
   file_format: 1
