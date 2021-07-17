@@ -16,8 +16,10 @@ Fs = 44100
 data = np.array([0, 1, 1, 1, 0, 0, 1, 0])
 dn = comsig.sigSequ(data, FB = 100)
 
-f1, f2 = 332, 723
-sig_xt = ModuleLab8.cpfskxmtr(2, dn, 44100, 'rect', [], [332, 723 - 332])
+M = 2
+FB = 100
+data = np.array([0, 1, 1, 1, 0, 0, 1, 0])
+sig_xt = ModuleLab8.cpfskxmtr(2, dn, 44100, 'rect', [], [300, 100])
 
 
 plt.ylim([-1.5, 1.5])
