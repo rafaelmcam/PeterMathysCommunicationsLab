@@ -434,7 +434,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1194, 387]
+    coordinate: [1189, 389]
     rotation: 0
     state: true
 - name: pad_sink_3

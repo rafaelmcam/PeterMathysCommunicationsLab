@@ -173,7 +173,7 @@ blocks:
     alias: ''
     bits_per_chunk: b_bpsym
     comment: ''
-    endianness: gr.GR_LSB_FIRST
+    endianness: gr.GR_MSB_FIRST
     maxoutbuf: '0'
     minoutbuf: '0'
     num_ports: '1'

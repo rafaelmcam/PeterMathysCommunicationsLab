@@ -26,20 +26,19 @@ import sys
 sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
 
 from ASKrcvr_cb import ASKrcvr_cb  # grc-generated hier_block
-from ASKxmtr_bc import ASKxmtr_bc  # grc-generated hier_block
 from PyQt5 import Qt
 from PyQt5.QtCore import QObject, pyqtSlot
 from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
 from gnuradio import blocks
+import pmt
 from gnuradio import gr
 import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.qtgui import Range, RangeWidget
-import pmt
 
 from gnuradio import qtgui
 
@@ -84,11 +83,11 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.sym_dly = sym_dly = 0
         self.sps = sps = 16
         self.samp_dly = samp_dly = 0
-        self.ptype = ptype = 'rect'
+        self.ptype = ptype = "rect"
         self.pparms = pparms = (5, 0.3)
         self.pol = pol = 0
         self.gain = gain = 1
-        self.fc_Xmtr = fc_Xmtr = 50000
+        self.fc_Xmtr = fc_Xmtr = 39000
         self.fc = fc = 50000
         self.bpsym = bpsym = 1
         self.Q_gain = Q_gain = 1
@@ -109,31 +108,6 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self._samp_dly_win = RangeWidget(self._samp_dly_range, self.set_samp_dly, 'samp_dly', "counter_slider", float)
         self.top_grid_layout.addWidget(self._samp_dly_win)
         # Create the options list
-        self._ptype_options = ('rect', 'tri', 'rcf', 'rrcf', )
-        # Create the labels list
-        self._ptype_labels = ('rect', 'tri', 'rcf', 'rrcf', )
-        # Create the combo box
-        # Create the radio buttons
-        self._ptype_group_box = Qt.QGroupBox('ptype' + ": ")
-        self._ptype_box = Qt.QVBoxLayout()
-        class variable_chooser_button_group(Qt.QButtonGroup):
-            def __init__(self, parent=None):
-                Qt.QButtonGroup.__init__(self, parent)
-            @pyqtSlot(int)
-            def updateButtonChecked(self, button_id):
-                self.button(button_id).setChecked(True)
-        self._ptype_button_group = variable_chooser_button_group()
-        self._ptype_group_box.setLayout(self._ptype_box)
-        for i, _label in enumerate(self._ptype_labels):
-            radio_button = Qt.QRadioButton(_label)
-            self._ptype_box.addWidget(radio_button)
-            self._ptype_button_group.addButton(radio_button, i)
-        self._ptype_callback = lambda i: Qt.QMetaObject.invokeMethod(self._ptype_button_group, "updateButtonChecked", Qt.Q_ARG("int", self._ptype_options.index(i)))
-        self._ptype_callback(self.ptype)
-        self._ptype_button_group.buttonClicked[int].connect(
-            lambda i: self.set_ptype(self._ptype_options[i]))
-        self.top_grid_layout.addWidget(self._ptype_group_box)
-        # Create the options list
         self._pol_options = (0, 1, )
         # Create the labels list
         self._pol_labels = ('0', '1', )
@@ -149,7 +123,10 @@ class ASK_test002(gr.top_block, Qt.QWidget):
             lambda i: self.set_pol(self._pol_options[i]))
         # Create the radio buttons
         self.top_grid_layout.addWidget(self._pol_tool_bar)
-        self._fc_Xmtr_range = Range(-100000, 100000, 0.1, 50000, 200)
+        self._gain_range = Range(0, 1000, 1, 1, 200)
+        self._gain_win = RangeWidget(self._gain_range, self.set_gain, 'gain', "counter_slider", float)
+        self.top_grid_layout.addWidget(self._gain_win)
+        self._fc_Xmtr_range = Range(-100000, 100000, 0.1, 39000, 200)
         self._fc_Xmtr_win = RangeWidget(self._fc_Xmtr_range, self.set_fc_Xmtr, 'fc_Xmtr', "counter_slider", float)
         self.top_grid_layout.addWidget(self._fc_Xmtr_win)
         self._Q_gain_range = Range(0, 4, 0.1, 1, 200)
@@ -161,7 +138,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_1 = qtgui.time_sink_c(
             1024, #size
             Fs, #samp_rate
-            "", #name
+            "MF/Sample Out", #name
             2 #number of inputs
         )
         self.qtgui_time_sink_x_1.set_update_time(0.10)
@@ -211,7 +188,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
             1024, #size
             Fs, #samp_rate
-            "", #name
+            "ASK Xmtr", #name
             1 #number of inputs
         )
         self.qtgui_time_sink_x_0.set_update_time(0.10)
@@ -258,6 +235,46 @@ class ASK_test002(gr.top_block, Qt.QWidget):
 
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
+        self.qtgui_freq_sink_x_0_0 = qtgui.freq_sink_c(
+            1024, #size
+            firdes.WIN_BLACKMAN_hARRIS, #wintype
+            0, #fc
+            Fs, #bw
+            "After", #name
+            1
+        )
+        self.qtgui_freq_sink_x_0_0.set_update_time(0.10)
+        self.qtgui_freq_sink_x_0_0.set_y_axis(-140, 10)
+        self.qtgui_freq_sink_x_0_0.set_y_label('Relative Gain', 'dB')
+        self.qtgui_freq_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
+        self.qtgui_freq_sink_x_0_0.enable_autoscale(False)
+        self.qtgui_freq_sink_x_0_0.enable_grid(False)
+        self.qtgui_freq_sink_x_0_0.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_0_0.enable_axis_labels(True)
+        self.qtgui_freq_sink_x_0_0.enable_control_panel(False)
+
+
+
+        labels = ['', '', '', '', '',
+            '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+            "magenta", "yellow", "dark red", "dark green", "dark blue"]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+
+        for i in range(1):
+            if len(labels[i]) == 0:
+                self.qtgui_freq_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_freq_sink_x_0_0.set_line_label(i, labels[i])
+            self.qtgui_freq_sink_x_0_0.set_line_width(i, widths[i])
+            self.qtgui_freq_sink_x_0_0.set_line_color(i, colors[i])
+            self.qtgui_freq_sink_x_0_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_freq_sink_x_0_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_freq_sink_x_0_0_win)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
             1024, #size
             firdes.WIN_BLACKMAN_hARRIS, #wintype
@@ -338,31 +355,15 @@ class ASK_test002(gr.top_block, Qt.QWidget):
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win)
-        self._gain_range = Range(0, 4, 0.1, 1, 200)
-        self._gain_win = RangeWidget(self._gain_range, self.set_gain, 'gain', "counter_slider", float)
-        self.top_grid_layout.addWidget(self._gain_win)
-        self.blocks_vector_source_x_0 = blocks.vector_source_b(list(ord(i) for i in "The quick brown fox...\n"), True, 1, [tag0])
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, FB,True)
-        self.blocks_null_sink_0_0_0 = blocks.null_sink(gr.sizeof_char*1)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, Fs,True)
         self.blocks_null_sink_0_0 = blocks.null_sink(gr.sizeof_char*1)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
-        self.blocks_file_sink_0_0_0 = blocks.file_sink(gr.sizeof_char*1, '/dev/pts/7', False)
-        self.blocks_file_sink_0_0_0.set_unbuffered(False)
-        self.blocks_file_sink_0_0 = blocks.file_sink(gr.sizeof_char*1, '/dev/pts/6', False)
-        self.blocks_file_sink_0_0.set_unbuffered(False)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, '/home/rcampello/Main/3m/Simulação de sistemas de comunicação/Labs/Lab8/Files/digMod_805.bin', True, 0, 0)
+        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/dev/pts/5', False)
         self.blocks_file_sink_0.set_unbuffered(False)
-        self.ASKxmtr_bc_0 = ASKxmtr_bc(
-            a_FB=FB,
-            b_bpsym=bpsym,
-            c_pol=pol,
-            d_sps=sps,
-            e_ptype=ptype,
-            f_pparms=pparms,
-            g_fcparms=(fc_Xmtr, thc_Xmtr),
-        )
         self.ASKrcvr_cb_0 = ASKrcvr_cb(
-            a_gain=1,
+            a_gain=gain,
             b_FB=FB,
             c_bpsym=bpsym * (1 + 1j),
             d_pol=pol,
@@ -381,19 +382,16 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.ASKrcvr_cb_0, 3), (self.blocks_file_sink_0, 0))
-        self.connect((self.ASKrcvr_cb_0, 4), (self.blocks_file_sink_0_0, 0))
-        self.connect((self.ASKrcvr_cb_0, 5), (self.blocks_file_sink_0_0_0, 0))
-        self.connect((self.ASKrcvr_cb_0, 3), (self.blocks_null_sink_0, 0))
-        self.connect((self.ASKrcvr_cb_0, 4), (self.blocks_null_sink_0_0, 0))
-        self.connect((self.ASKrcvr_cb_0, 5), (self.blocks_null_sink_0_0_0, 0))
+        self.connect((self.ASKrcvr_cb_0, 4), (self.blocks_null_sink_0, 0))
+        self.connect((self.ASKrcvr_cb_0, 5), (self.blocks_null_sink_0_0, 0))
         self.connect((self.ASKrcvr_cb_0, 2), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.ASKrcvr_cb_0, 0), (self.qtgui_time_sink_x_1, 0))
+        self.connect((self.ASKrcvr_cb_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.ASKrcvr_cb_0, 1), (self.qtgui_time_sink_x_1, 1))
-        self.connect((self.ASKxmtr_bc_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.ASKrcvr_cb_0, 0), (self.qtgui_time_sink_x_1, 0))
+        self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.ASKrcvr_cb_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.qtgui_time_sink_x_0, 0))
-        self.connect((self.blocks_vector_source_x_0, 0), (self.ASKxmtr_bc_0, 0))
 
 
     def closeEvent(self, event):
@@ -407,14 +405,12 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_thc_Xmtr(self, thc_Xmtr):
         self.thc_Xmtr = thc_Xmtr
         self.ASKrcvr_cb_0.set_h_fcparms((self.fc_Xmtr, self.thc_Xmtr))
-        self.ASKxmtr_bc_0.set_g_fcparms((self.fc_Xmtr, self.thc_Xmtr))
 
     def get_tag0(self):
         return self.tag0
 
     def set_tag0(self, tag0):
         self.tag0 = tag0
-        self.blocks_vector_source_x_0.set_data(list(ord(i) for i in "The quick brown fox...\n"), [self.tag0])
 
     def get_sym_dly(self):
         return self.sym_dly
@@ -429,7 +425,6 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_sps(self, sps):
         self.sps = sps
         self.ASKrcvr_cb_0.set_e_sps(self.sps)
-        self.ASKxmtr_bc_0.set_d_sps(self.sps)
 
     def get_samp_dly(self):
         return self.samp_dly
@@ -443,9 +438,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
 
     def set_ptype(self, ptype):
         self.ptype = ptype
-        self._ptype_callback(self.ptype)
         self.ASKrcvr_cb_0.set_f_ptype(self.ptype)
-        self.ASKxmtr_bc_0.set_e_ptype(self.ptype)
 
     def get_pparms(self):
         return self.pparms
@@ -453,7 +446,6 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_pparms(self, pparms):
         self.pparms = pparms
         self.ASKrcvr_cb_0.set_g_pparms(self.pparms)
-        self.ASKxmtr_bc_0.set_f_pparms(self.pparms)
 
     def get_pol(self):
         return self.pol
@@ -462,13 +454,13 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.pol = pol
         self._pol_callback(self.pol)
         self.ASKrcvr_cb_0.set_d_pol(self.pol)
-        self.ASKxmtr_bc_0.set_c_pol(self.pol)
 
     def get_gain(self):
         return self.gain
 
     def set_gain(self, gain):
         self.gain = gain
+        self.ASKrcvr_cb_0.set_a_gain(self.gain)
 
     def get_fc_Xmtr(self):
         return self.fc_Xmtr
@@ -476,7 +468,6 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_fc_Xmtr(self, fc_Xmtr):
         self.fc_Xmtr = fc_Xmtr
         self.ASKrcvr_cb_0.set_h_fcparms((self.fc_Xmtr, self.thc_Xmtr))
-        self.ASKxmtr_bc_0.set_g_fcparms((self.fc_Xmtr, self.thc_Xmtr))
 
     def get_fc(self):
         return self.fc
@@ -490,7 +481,6 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_bpsym(self, bpsym):
         self.bpsym = bpsym
         self.ASKrcvr_cb_0.set_c_bpsym(self.bpsym * (1 + 1j))
-        self.ASKxmtr_bc_0.set_b_bpsym(self.bpsym)
 
     def get_Q_gain(self):
         return self.Q_gain
@@ -511,7 +501,9 @@ class ASK_test002(gr.top_block, Qt.QWidget):
 
     def set_Fs(self, Fs):
         self.Fs = Fs
+        self.blocks_throttle_0.set_sample_rate(self.Fs)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.Fs)
+        self.qtgui_freq_sink_x_0_0.set_frequency_range(0, self.Fs)
         self.qtgui_time_sink_x_0.set_samp_rate(self.Fs)
         self.qtgui_time_sink_x_1.set_samp_rate(self.Fs)
 
@@ -521,8 +513,6 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_FB(self, FB):
         self.FB = FB
         self.ASKrcvr_cb_0.set_b_FB(self.FB)
-        self.ASKxmtr_bc_0.set_a_FB(self.FB)
-        self.blocks_throttle_0.set_sample_rate(self.FB)
 
 
 
