@@ -74,7 +74,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [37, 498]
+    coordinate: [37, 433]
     rotation: 0
     state: true
 - name: Q_gain
@@ -95,7 +95,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [40, 613]
+    coordinate: [37, 545]
     rotation: 0
     state: true
 - name: bpsym
@@ -359,7 +359,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [866, 608]
+    coordinate: [1283, 572]
     rotation: 0
     state: true
 - name: blocks_file_sink_0_1
@@ -377,7 +377,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1282, 624]
+    coordinate: [1279, 643]
     rotation: 0
     state: true
 - name: blocks_file_sink_0_1_0
@@ -395,7 +395,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1276, 693]
+    coordinate: [1278, 716]
     rotation: 0
     state: true
 - name: blocks_null_sink_0
@@ -412,7 +412,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1168, 787]
+    coordinate: [1008, 651]
     rotation: 0
     state: true
 - name: blocks_null_sink_0_0
@@ -429,7 +429,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1160, 822]
+    coordinate: [1000, 686]
     rotation: 0
     state: true
 - name: blocks_null_sink_0_1
@@ -446,7 +446,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1171, 753]
+    coordinate: [1011, 617]
     rotation: 0
     state: true
 - name: blocks_throttle_0
