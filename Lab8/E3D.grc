@@ -10,7 +10,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: ASK_test002
+    id: E3D
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -21,7 +21,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: Main Schema
+    title: E3D
     window_size: ''
   states:
     bus_sink: false
@@ -41,19 +41,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [217, 179]
+    coordinate: [248, 25]
     rotation: 0
     state: enabled
 - name: Fs
   id: variable
   parameters:
     comment: ''
-    value: '1000000'
+    value: sps * FB
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [148, 243]
+    coordinate: [179, 89]
     rotation: 0
     state: enabled
 - name: I_gain
@@ -107,7 +107,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [147, 179]
+    coordinate: [178, 25]
     rotation: 0
     state: enabled
 - name: fc_Xmtr
@@ -278,7 +278,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [220, 243]
+    coordinate: [251, 89]
     rotation: 0
     state: enabled
 - name: sym_dly

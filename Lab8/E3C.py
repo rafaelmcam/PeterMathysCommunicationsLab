@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0
 #
 # GNU Radio Python Flow Graph
-# Title: Main Schema
+# Title: E3C
 # Author: rcampello
 # GNU Radio version: 3.8.2.0
 
@@ -26,28 +26,29 @@ import sys
 sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
 
 from ASKrcvr_cb import ASKrcvr_cb  # grc-generated hier_block
+from ASKxmtr_bc import ASKxmtr_bc  # grc-generated hier_block
 from PyQt5 import Qt
 from PyQt5.QtCore import QObject, pyqtSlot
 from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
 from gnuradio import blocks
-import pmt
 from gnuradio import gr
 import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.qtgui import Range, RangeWidget
+import pmt
 
 from gnuradio import qtgui
 
-class ASK_test002(gr.top_block, Qt.QWidget):
+class E3C(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Main Schema")
+        gr.top_block.__init__(self, "E3C")
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Main Schema")
+        self.setWindowTitle("E3C")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -65,7 +66,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "ASK_test002")
+        self.settings = Qt.QSettings("GNU Radio", "E3C")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -78,10 +79,11 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
+        self.sps = sps = 80
+        self.FB = FB = 12500
         self.thc_Xmtr = thc_Xmtr = 0
         self.tag0 = tag0 = gr.tag_utils.python_to_tag((0, pmt.intern("T"), pmt.intern("0x54"), pmt.intern("vec src")))
         self.sym_dly = sym_dly = 0
-        self.sps = sps = 80
         self.samp_dly = samp_dly = 0
         self.ptype = ptype = "rect"
         self.pparms = pparms = (5, 0.3)
@@ -91,8 +93,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.bpsym = bpsym = 1
         self.Q_gain = Q_gain = 1
         self.I_gain = I_gain = 1
-        self.Fs = Fs = 1000000
-        self.FB = FB = 12500
+        self.Fs = Fs = sps * FB
 
         ##################################################
         # Blocks
@@ -354,18 +355,26 @@ class ASK_test002(gr.top_block, Qt.QWidget):
 
         self._qtgui_const_sink_x_0_win = sip.wrapinstance(self.qtgui_const_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_const_sink_x_0_win)
+        self.blocks_vector_source_x_0 = blocks.vector_source_b(list(ord(i) for i in "The quick brown fox...\n"), True, 1, [tag0])
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, Fs,True)
         self.blocks_null_sink_0_1 = blocks.null_sink(gr.sizeof_char*1)
         self.blocks_null_sink_0_0 = blocks.null_sink(gr.sizeof_char*1)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, '/home/rcampello/Main/3m/Simulação de sistemas de comunicação/Labs/Lab8/Files/digMod_805.bin', True, 0, 0)
-        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_file_sink_0_1_0 = blocks.file_sink(gr.sizeof_char*1, '/dev/pts/9', False)
         self.blocks_file_sink_0_1_0.set_unbuffered(False)
         self.blocks_file_sink_0_1 = blocks.file_sink(gr.sizeof_char*1, '/dev/pts/8', False)
         self.blocks_file_sink_0_1.set_unbuffered(False)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '/dev/pts/7', False)
         self.blocks_file_sink_0.set_unbuffered(False)
+        self.ASKxmtr_bc_0 = ASKxmtr_bc(
+            a_FB=FB,
+            b_bpsym=bpsym,
+            c_pol=pol,
+            d_sps=sps,
+            e_ptype=ptype,
+            f_pparms=pparms,
+            g_fcparms=(fc_Xmtr, thc_Xmtr),
+        )
         self.ASKrcvr_cb_0 = ASKrcvr_cb(
             a_gain=gain,
             b_FB=FB,
@@ -395,16 +404,35 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.connect((self.ASKrcvr_cb_0, 0), (self.qtgui_freq_sink_x_0_0, 0))
         self.connect((self.ASKrcvr_cb_0, 0), (self.qtgui_time_sink_x_1, 0))
         self.connect((self.ASKrcvr_cb_0, 1), (self.qtgui_time_sink_x_1, 1))
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.ASKxmtr_bc_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.ASKrcvr_cb_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.qtgui_freq_sink_x_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.ASKxmtr_bc_0, 0))
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "ASK_test002")
+        self.settings = Qt.QSettings("GNU Radio", "E3C")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
+
+    def get_sps(self):
+        return self.sps
+
+    def set_sps(self, sps):
+        self.sps = sps
+        self.set_Fs(self.sps * self.FB)
+        self.ASKrcvr_cb_0.set_e_sps(self.sps)
+        self.ASKxmtr_bc_0.set_d_sps(self.sps)
+
+    def get_FB(self):
+        return self.FB
+
+    def set_FB(self, FB):
+        self.FB = FB
+        self.set_Fs(self.sps * self.FB)
+        self.ASKrcvr_cb_0.set_b_FB(self.FB)
+        self.ASKxmtr_bc_0.set_a_FB(self.FB)
 
     def get_thc_Xmtr(self):
         return self.thc_Xmtr
@@ -412,12 +440,14 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_thc_Xmtr(self, thc_Xmtr):
         self.thc_Xmtr = thc_Xmtr
         self.ASKrcvr_cb_0.set_h_fcparms((self.fc_Xmtr, self.thc_Xmtr))
+        self.ASKxmtr_bc_0.set_g_fcparms((self.fc_Xmtr, self.thc_Xmtr))
 
     def get_tag0(self):
         return self.tag0
 
     def set_tag0(self, tag0):
         self.tag0 = tag0
+        self.blocks_vector_source_x_0.set_data(list(ord(i) for i in "The quick brown fox...\n"), [self.tag0])
 
     def get_sym_dly(self):
         return self.sym_dly
@@ -425,13 +455,6 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_sym_dly(self, sym_dly):
         self.sym_dly = sym_dly
         self.ASKrcvr_cb_0.set_k_sym_dly(self.sym_dly)
-
-    def get_sps(self):
-        return self.sps
-
-    def set_sps(self, sps):
-        self.sps = sps
-        self.ASKrcvr_cb_0.set_e_sps(self.sps)
 
     def get_samp_dly(self):
         return self.samp_dly
@@ -446,6 +469,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_ptype(self, ptype):
         self.ptype = ptype
         self.ASKrcvr_cb_0.set_f_ptype(self.ptype)
+        self.ASKxmtr_bc_0.set_e_ptype(self.ptype)
 
     def get_pparms(self):
         return self.pparms
@@ -453,6 +477,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_pparms(self, pparms):
         self.pparms = pparms
         self.ASKrcvr_cb_0.set_g_pparms(self.pparms)
+        self.ASKxmtr_bc_0.set_f_pparms(self.pparms)
 
     def get_pol(self):
         return self.pol
@@ -461,6 +486,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.pol = pol
         self._pol_callback(self.pol)
         self.ASKrcvr_cb_0.set_d_pol(self.pol)
+        self.ASKxmtr_bc_0.set_c_pol(self.pol)
 
     def get_gain(self):
         return self.gain
@@ -475,6 +501,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_fc_Xmtr(self, fc_Xmtr):
         self.fc_Xmtr = fc_Xmtr
         self.ASKrcvr_cb_0.set_h_fcparms((self.fc_Xmtr, self.thc_Xmtr))
+        self.ASKxmtr_bc_0.set_g_fcparms((self.fc_Xmtr, self.thc_Xmtr))
 
     def get_bpsym(self):
         return self.bpsym
@@ -482,6 +509,7 @@ class ASK_test002(gr.top_block, Qt.QWidget):
     def set_bpsym(self, bpsym):
         self.bpsym = bpsym
         self.ASKrcvr_cb_0.set_c_bpsym(self.bpsym * (1 + 1j))
+        self.ASKxmtr_bc_0.set_b_bpsym(self.bpsym)
 
     def get_Q_gain(self):
         return self.Q_gain
@@ -508,18 +536,11 @@ class ASK_test002(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_0.set_samp_rate(self.Fs)
         self.qtgui_time_sink_x_1.set_samp_rate(self.Fs)
 
-    def get_FB(self):
-        return self.FB
-
-    def set_FB(self, FB):
-        self.FB = FB
-        self.ASKrcvr_cb_0.set_b_FB(self.FB)
 
 
 
 
-
-def main(top_block_cls=ASK_test002, options=None):
+def main(top_block_cls=E3C, options=None):
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')

@@ -10,7 +10,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: ASK_test002
+    id: E3C
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -21,7 +21,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: Main Schema
+    title: E3C
     window_size: ''
   states:
     bus_sink: false
@@ -41,19 +41,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [217, 179]
+    coordinate: [251, 17]
     rotation: 0
     state: enabled
 - name: Fs
   id: variable
   parameters:
     comment: ''
-    value: '1000000'
+    value: sps * FB
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [148, 243]
+    coordinate: [182, 81]
     rotation: 0
     state: enabled
 - name: I_gain
@@ -74,7 +74,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [25, 493]
+    coordinate: [37, 498]
     rotation: 0
     state: true
 - name: Q_gain
@@ -95,7 +95,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [28, 608]
+    coordinate: [40, 613]
     rotation: 0
     state: true
 - name: bpsym
@@ -107,7 +107,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [147, 179]
+    coordinate: [181, 17]
     rotation: 0
     state: enabled
 - name: fc_Xmtr
@@ -128,7 +128,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [751, 13]
+    coordinate: [763, 18]
     rotation: 0
     state: true
 - name: gain
@@ -149,7 +149,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1106, 15]
+    coordinate: [1118, 20]
     rotation: 0
     state: true
 - name: pol
@@ -179,7 +179,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [618, 11]
+    coordinate: [630, 16]
     rotation: 0
     state: true
 - name: pparms
@@ -191,40 +191,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [10, 109]
+    coordinate: [10, 107]
     rotation: 0
     state: enabled
 - name: ptype
-  id: variable_qtgui_chooser
-  parameters:
-    comment: ''
-    gui_hint: ''
-    label: ''
-    label0: rect
-    label1: tri
-    label2: rcf
-    label3: rrcf
-    label4: ''
-    labels: '[]'
-    num_opts: '4'
-    option0: rect
-    option1: tri
-    option2: rcf
-    option3: rrcf
-    option4: '4'
-    options: '[0, 1, 2]'
-    orient: Qt.QVBoxLayout
-    type: string
-    value: rect
-    widget: radio_buttons
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [496, 8]
-    rotation: 0
-    state: disabled
-- name: ptype
   id: variable
   parameters:
     comment: ''
@@ -233,19 +203,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [412, 180]
-    rotation: 0
-    state: disabled
-- name: ptype
-  id: variable
-  parameters:
-    comment: ''
-    value: '"rect"'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [489, 148]
+    coordinate: [501, 153]
     rotation: 0
     state: enabled
 - name: samp_dly
@@ -266,7 +224,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [989, 11]
+    coordinate: [1001, 16]
     rotation: 0
     state: true
 - name: sps
@@ -278,7 +236,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [220, 243]
+    coordinate: [254, 81]
     rotation: 0
     state: enabled
 - name: sym_dly
@@ -299,7 +257,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1219, 17]
+    coordinate: [1231, 22]
     rotation: 0
     state: true
 - name: tag0
@@ -314,7 +272,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [377, 7]
+    coordinate: [389, 12]
     rotation: 0
     state: true
 - name: thc_Xmtr
@@ -335,7 +293,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [869, 13]
+    coordinate: [881, 18]
     rotation: 0
     state: true
 - name: ASKrcvr_cb_0
@@ -361,7 +319,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [381, 481]
+    coordinate: [393, 486]
+    rotation: 0
+    state: true
+- name: ASKxmtr_bc_0
+  id: ASKxmtr_bc
+  parameters:
+    a_FB: FB
+    affinity: ''
+    alias: ''
+    b_bpsym: bpsym
+    c_pol: pol
+    comment: ''
+    d_sps: sps
+    e_ptype: ptype
+    f_pparms: pparms
+    g_fcparms: (fc_Xmtr, thc_Xmtr)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [384, 271]
     rotation: 0
     state: true
 - name: blocks_file_sink_0
@@ -379,45 +359,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [854, 603]
+    coordinate: [866, 608]
     rotation: 0
     state: true
-- name: blocks_file_sink_0_0
-  id: blocks_file_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    append: 'False'
-    comment: ''
-    file: /dev/pts/6
-    type: byte
-    unbuffered: 'False'
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [792, 732]
-    rotation: 0
-    state: disabled
-- name: blocks_file_sink_0_0_0
-  id: blocks_file_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    append: 'False'
-    comment: ''
-    file: /dev/pts/7
-    type: byte
-    unbuffered: 'False'
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [775, 810]
-    rotation: 0
-    state: disabled
 - name: blocks_file_sink_0_1
   id: blocks_file_sink
   parameters:
@@ -433,7 +377,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1270, 619]
+    coordinate: [1282, 624]
     rotation: 0
     state: true
 - name: blocks_file_sink_0_1_0
@@ -451,30 +395,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1264, 688]
-    rotation: 0
-    state: true
-- name: blocks_file_source_0
-  id: blocks_file_source
-  parameters:
-    affinity: ''
-    alias: ''
-    begin_tag: pmt.PMT_NIL
-    comment: ''
-    file: "/home/rcampello/Main/3m/Simula\xE7\xE3o de sistemas de comunica\xE7\xE3\
-      o/Labs/Lab8/Files/digMod_805.bin"
-    length: '0'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    offset: '0'
-    repeat: 'True'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [378, 282]
+    coordinate: [1276, 693]
     rotation: 0
     state: true
 - name: blocks_null_sink_0
@@ -491,7 +412,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1156, 782]
+    coordinate: [1168, 787]
     rotation: 0
     state: true
 - name: blocks_null_sink_0_0
@@ -508,7 +429,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1148, 817]
+    coordinate: [1160, 822]
     rotation: 0
     state: true
 - name: blocks_null_sink_0_1
@@ -525,7 +446,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1159, 748]
+    coordinate: [1171, 753]
     rotation: 0
     state: true
 - name: blocks_throttle_0
@@ -544,7 +465,27 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [621, 314]
+    coordinate: [633, 319]
+    rotation: 0
+    state: true
+- name: blocks_vector_source_x_0
+  id: blocks_vector_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    repeat: 'True'
+    tags: '[tag0]'
+    type: byte
+    vector: list(ord(i) for i in "The quick brown fox...\n")
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [138, 303]
     rotation: 0
     state: true
 - name: qtgui_const_sink_x_0
@@ -636,7 +577,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [839, 547]
+    coordinate: [851, 552]
     rotation: 0
     state: true
 - name: qtgui_freq_sink_x_0
@@ -716,7 +657,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [882, 327]
+    coordinate: [894, 332]
     rotation: 0
     state: true
 - name: qtgui_freq_sink_x_0_0
@@ -796,7 +737,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1150, 416]
+    coordinate: [1162, 421]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0
@@ -893,7 +834,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [881, 233]
+    coordinate: [893, 238]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_1
@@ -990,7 +931,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [845, 455]
+    coordinate: [857, 460]
     rotation: 0
     state: true
 
@@ -1001,16 +942,15 @@ connections:
 - [ASKrcvr_cb_0, '2', qtgui_const_sink_x_0, '0']
 - [ASKrcvr_cb_0, '3', blocks_file_sink_0, '0']
 - [ASKrcvr_cb_0, '3', blocks_null_sink_0_1, '0']
-- [ASKrcvr_cb_0, '4', blocks_file_sink_0_0, '0']
 - [ASKrcvr_cb_0, '4', blocks_file_sink_0_1, '0']
 - [ASKrcvr_cb_0, '4', blocks_null_sink_0, '0']
-- [ASKrcvr_cb_0, '5', blocks_file_sink_0_0_0, '0']
 - [ASKrcvr_cb_0, '5', blocks_file_sink_0_1_0, '0']
 - [ASKrcvr_cb_0, '5', blocks_null_sink_0_0, '0']
-- [blocks_file_source_0, '0', blocks_throttle_0, '0']
+- [ASKxmtr_bc_0, '0', blocks_throttle_0, '0']
 - [blocks_throttle_0, '0', ASKrcvr_cb_0, '0']
 - [blocks_throttle_0, '0', qtgui_freq_sink_x_0, '0']
 - [blocks_throttle_0, '0', qtgui_time_sink_x_0, '0']
+- [blocks_vector_source_x_0, '0', ASKxmtr_bc_0, '0']
 
 metadata:
   file_format: 1

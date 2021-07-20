@@ -36,7 +36,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '256000'
+    value: c_sps * b_FB
   states:
     bus_sink: false
     bus_source: false

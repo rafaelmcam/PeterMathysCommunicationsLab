@@ -28,6 +28,8 @@ def cpfskxmtr(M,sig_dn,Fs,ptype,pparms,fcparms):
     fc: carrier frequency for {’cpfsk’}
     deltaf: frequency spacing for {’cpfsk’} for dn=0 -> fc, dn=1 -> fc+deltaf, dn=2 -> fc+2*deltaf, etc
     """
+    if ptype == "man":
+        raise NotImplementedError("Lógica indefinida para pulso man")
     # if ptype != "rect":
     #     raise NotImplementedError("Lógica feita para pulso retangular (fase variando linearmente dentro do intervalo do símbolo)")
 
